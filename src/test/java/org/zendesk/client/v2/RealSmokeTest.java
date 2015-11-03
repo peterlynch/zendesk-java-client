@@ -140,7 +140,7 @@ public class RealSmokeTest {
     public void getTicketFieldsOnForm() throws Exception {
         createClientWithTokenOrPassword();
         TicketForm ticketForm = instance.getTicketForm(27562);
-        for (Integer id : ticketForm.getTicketFieldIds()) {
+        for (Long id : ticketForm.getTicketFieldIds()) {
             Field f = instance.getTicketField(id);
             assertNotNull(f);
         }

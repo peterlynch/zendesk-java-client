@@ -24,7 +24,7 @@ public class TicketForm implements SearchResultEntity {
     @JsonProperty("default")
     private boolean defaultForm;
     @JsonProperty("ticket_field_ids")
-    private List<Integer> ticketFieldIds;
+    private List<Long> ticketFieldIds;
     @JsonProperty("created_at")
     private Date createdAt;
     @JsonProperty("updated_at")
@@ -98,11 +98,11 @@ public class TicketForm implements SearchResultEntity {
         this.defaultForm = defaultForm;
     }
 
-    public List<Integer> getTicketFieldIds() {
+    public List<Long> getTicketFieldIds() {
         return ticketFieldIds;
     }
 
-    public void setTicketFieldIds(List<Integer> ticketFieldIds) {
+    public void setTicketFieldIds(List<Long> ticketFieldIds) {
         this.ticketFieldIds = ticketFieldIds;
     }
 

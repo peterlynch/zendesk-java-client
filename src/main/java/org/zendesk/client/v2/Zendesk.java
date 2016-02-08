@@ -1610,9 +1610,9 @@ public class Zendesk implements Closeable {
                 handleStatus()));
     }
 
-    public List<Category> getCategories() {
-        return complete(submit(req("GET", cnst("/help_center/categories.json")),
-                handleList(Category.class, "categories")));
+    public Iterable<Category> getCategories() {
+        return new PagedIterable<Category>(cnst("/help_center/categories.json"), handleList(Category.class,
+                "categories"));
     }
 
     public Category getCategory(int id) {

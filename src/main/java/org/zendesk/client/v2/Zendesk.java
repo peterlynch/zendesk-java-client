@@ -649,7 +649,7 @@ public class Zendesk implements Closeable {
 
     public void deleteTicketField(Field field) {
         checkHasId(field);
-        deleteTicket(field.getId());
+        deleteTicketField(field.getId());
     }
 
     public void deleteTicketField(long id) {

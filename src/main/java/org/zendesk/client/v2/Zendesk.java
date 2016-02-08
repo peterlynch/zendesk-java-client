@@ -43,6 +43,7 @@ import org.zendesk.client.v2.model.Trigger;
 import org.zendesk.client.v2.model.TwitterMonitor;
 import org.zendesk.client.v2.model.User;
 import org.zendesk.client.v2.model.UserField;
+import org.zendesk.client.v2.model.hc.AccessPolicy;
 import org.zendesk.client.v2.model.hc.Article;
 import org.zendesk.client.v2.model.hc.ArticleAttachments;
 import org.zendesk.client.v2.model.hc.Category;
@@ -1683,6 +1684,20 @@ public class Zendesk implements Closeable {
         checkHasId(section);
         complete(submit(req("DELETE", tmpl("/help_center/sections/{id}.json").set("id", section.getId())),
                 handleStatus()));
+    }
+
+    public AccessPolicy getAccessPolicy(Section section) {
+        checkHasId(section);
+        return complete(submit(req("GET", tmpl("/help_center/sections/{id}/access_policy.json").set("id", section
+                        .getId())),
+                handle(AccessPolicy.class, "access_policy")));
+    }
+
+    public AccessPolicy updateAccessPolicy(Section section, AccessPolicy accessPolicy) {
+        checkHasId(section);
+        return complete(submit(req("PUT", tmpl("/help_center/sections/{id}/access_policy.json").set("id", section
+                        .getId()), JSON, json(Collections.singletonMap("access_policy", accessPolicy))),
+                handle(AccessPolicy.class, "access_policy")));
     }
 
     private byte[] json(Object object) {

@@ -807,6 +807,10 @@ public class Zendesk implements Closeable {
                 handle(Automation.class, "automation")));
     }
 
+    public Iterable<Automation> listAutomations() {
+        return new PagedIterable<Automation>(cnst("/automations.json"), handleList(Automation.class, "automations"));
+    }
+
     public Automation createAutomation(Automation automation) {
         return complete(submit(
                 req("POST", cnst("/automations.json"), JSON,

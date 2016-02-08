@@ -210,6 +210,12 @@ public class Zendesk implements Closeable {
         }
     }
 
+    private static void checkHasId(TicketForm ticketForm) {
+        if (ticketForm.getId() == null) {
+            throw new IllegalArgumentException("TicketForm requires id");
+        }
+    }
+
     private static void checkHasId(org.zendesk.client.v2.model.Request request) {
         if (request.getId() == null) {
             throw new IllegalArgumentException("Request requires id");
@@ -393,6 +399,11 @@ public class Zendesk implements Closeable {
     public Iterable<TicketForm> getTicketForms() {
         return new PagedIterable<TicketForm>(cnst("/ticket_forms.json"), handleList(TicketForm.class,
                 "ticket_forms"));
+    }
+
+    public void deleteTicketForm(TicketForm ticketForm) {
+        checkHasId(ticketForm);
+        complete(submit(req("DELETE", tmpl("/ticket_forms/{id}.json").set("id", ticketForm.getId())), handleStatus()));
     }
 
     public Ticket getTicket(long id) {

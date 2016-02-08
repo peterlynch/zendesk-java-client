@@ -1643,15 +1643,17 @@ public class Zendesk implements Closeable {
                 handleStatus()));
     }
 
-    public List<Section> getSections() {
-        return complete(submit(req("GET", cnst("/help_center/sections.json")), handleList(Section.class, "sections")));
+    public Iterable<Section> getSections() {
+        return new PagedIterable<Section>(cnst("/help_center/sections.json"), handleList(Section.class,
+                "sections"));
     }
 
-    public List<Section> getSections(Category category) {
+    public Iterable<Section> getSections(Category category) {
         checkHasId(category);
-        return complete(
-                submit(req("GET", tmpl("/help_center/categories/{id}/sections.json").set("id", category.getId())),
-                        handleList(Section.class, "sections")));
+        return new PagedIterable<Section>(
+                tmpl("/help_center/categories/{id}/sections.json").set("id", category.getId()),
+                handleList(Section.class,
+                        "sections"));
     }
 
     public Section getSection(int id) {

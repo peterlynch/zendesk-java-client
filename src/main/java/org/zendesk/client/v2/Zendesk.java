@@ -401,6 +401,12 @@ public class Zendesk implements Closeable {
                 "ticket_forms"));
     }
 
+    public TicketForm createTicketForm(TicketForm ticketForm) {
+        return complete(submit(req("POST", cnst("/ticket_forms.json"),
+                JSON, json(Collections.singletonMap("ticket_form", ticketForm))),
+                handle(TicketForm.class, "ticket_form")));
+    }
+
     public void deleteTicketForm(TicketForm ticketForm) {
         checkHasId(ticketForm);
         complete(submit(req("DELETE", tmpl("/ticket_forms/{id}.json").set("id", ticketForm.getId())), handleStatus()));

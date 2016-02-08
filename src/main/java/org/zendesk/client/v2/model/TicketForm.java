@@ -29,6 +29,10 @@ public class TicketForm implements SearchResultEntity {
     private Date createdAt;
     @JsonProperty("updated_at")
     private Date updatedAt;
+    @JsonProperty("in_all_brands")
+    private Boolean inAllBrands;
+    @JsonProperty("restricted_brand_ids")
+    private List<Long> restrictedBrandIds;
 
     public String getName() {
         return name;
@@ -125,4 +129,22 @@ public class TicketForm implements SearchResultEntity {
     public void setId(Long id) {
         this.id = id;
     }
+
+
+    public boolean isInAllBrands() {
+        return inAllBrands;
+    }
+
+    public void setInAllBrands(boolean inAllBrands) {
+        this.inAllBrands = inAllBrands;
+    }
+
+    public List<Long> getRestrictedBrandIds() {
+        return restrictedBrandIds;
+    }
+
+    public void setRestrictedBrandIds(final List<Long> restrictedBrandIds) {
+        this.restrictedBrandIds = restrictedBrandIds;
+    }
+
 }

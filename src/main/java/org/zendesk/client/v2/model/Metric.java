@@ -220,7 +220,10 @@ public class Metric {
         @JsonProperty("business")
         protected Long businessMinutes;
 
-        public ZendeskComboMinutes() {};
+        public ZendeskComboMinutes() {
+        }
+
+        ;
 
         public Long getCalendarMinutes() {
             return calendarMinutes;

@@ -21,7 +21,8 @@ public class Macro {
     private Date createdAt;
     private Date updatedAt;
 
-    public Macro() {}
+    public Macro() {
+    }
 
     public int getId() {
         return id;

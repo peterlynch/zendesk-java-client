@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @since 05/04/2013 11:57
  */
 public class
-        SatisfactionRatingEvent extends Event {
+SatisfactionRatingEvent extends Event {
     private String score;
     private Long assigneeId;
     private String body;

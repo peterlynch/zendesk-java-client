@@ -23,6 +23,6 @@ public class StatusTest {
     public void deserializeFromLowercase() throws Exception {
         ObjectMapper mapper = Zendesk.createMapper();
         ObjectReader reader = mapper.reader(Status.class);
-        assertThat(reader.readValue("\"" + Status.PENDING.name().toLowerCase() + "\""), is((Object)Status.PENDING));
+        assertThat(reader.readValue("\"" + Status.PENDING.name().toLowerCase() + "\""), is((Object) Status.PENDING));
     }
 }

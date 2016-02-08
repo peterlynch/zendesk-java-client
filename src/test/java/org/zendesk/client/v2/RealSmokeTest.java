@@ -25,26 +25,25 @@ import org.zendesk.client.v2.model.hc.Section;
 import org.zendesk.client.v2.model.hc.Translation;
 import org.zendesk.client.v2.model.targets.Target;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.UUID;
-
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeThat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 
 /**
  * @author stephenc
@@ -75,8 +74,9 @@ public class RealSmokeTest {
 
     public void assumeHaveTokenOrPassword() {
         assumeThat("We have a username", config.getProperty("username"), notNullValue());
-        assumeThat("We have a token or password", config.getProperty("token") != null || config.getProperty("password") != null, is(
-                true));
+        assumeThat("We have a token or password",
+                config.getProperty("token") != null || config.getProperty("password") != null, is(
+                        true));
     }
 
     @After
@@ -124,24 +124,24 @@ public class RealSmokeTest {
         assertThat(ticketForm, notNullValue());
         assertTrue(ticketForm.isEndUserVisible());
     }
- 
+
     @Test
     public void getTicketForms() throws Exception {
         createClientWithTokenOrPassword();
         Iterable<TicketForm> ticketForms = instance.getTicketForms();
         assertTrue(ticketForms.iterator().hasNext());
-        for(TicketForm ticketForm : ticketForms){
-        	assertThat(ticketForm, notNullValue());
+        for (TicketForm ticketForm : ticketForms) {
+            assertThat(ticketForm, notNullValue());
         }
     }
-    
+
     @Test
     @Ignore("Needs specfic ticket form instance")
     public void getTicketFieldsOnForm() throws Exception {
         createClientWithTokenOrPassword();
         TicketForm ticketForm = instance.getTicketForm(27562);
-        for(Integer id :ticketForm.getTicketFieldIds()){
-            Field f = instance.getTicketField(id);  
+        for (Integer id : ticketForm.getTicketFieldIds()) {
+            Field f = instance.getTicketField(id);
             assertNotNull(f);
         }
         assertThat(ticketForm, notNullValue());
@@ -161,7 +161,7 @@ public class RealSmokeTest {
             }
         }
     }
-    
+
     @Test
     @Ignore("Needs test data setup correctly")
     public void getTicketsPagesRequests() throws Exception {
@@ -263,7 +263,8 @@ public class RealSmokeTest {
         Ticket t = new Ticket(
                 new Ticket.Requester(config.getProperty("requester.name"), config.getProperty("requester.email")),
                 "This is a test", new Comment("Please ignore this ticket"));
-        t.setCollaborators(Arrays.asList(new Collaborator("Bob Example", "bob@example.org"), new Collaborator("Alice Example", "alice@example.org")));
+        t.setCollaborators(Arrays.asList(new Collaborator("Bob Example", "bob@example.org"),
+                new Collaborator("Alice Example", "alice@example.org")));
         Ticket ticket = instance.createTicket(t);
         System.out.println(ticket.getId() + " -> " + ticket.getUrl());
         assertThat(ticket.getId(), notNullValue());
@@ -274,7 +275,8 @@ public class RealSmokeTest {
 
             List<User> ticketCollaborators = instance.getTicketCollaborators(ticket.getId());
             assertThat("Collaborators", ticketCollaborators.size(), is(2));
-            assertThat("First Collaborator", ticketCollaborators.get(0).getEmail(), anyOf(is("alice@example.org"), is("bob@example.org")));
+            assertThat("First Collaborator", ticketCollaborators.get(0).getEmail(),
+                    anyOf(is("alice@example.org"), is("bob@example.org")));
         } finally {
             instance.deleteTicket(ticket.getId());
         }
@@ -300,19 +302,20 @@ public class RealSmokeTest {
             ticket = instance.createTicket(t);
             System.out.println(ticket.getId() + " -> " + ticket.getUrl());
             assertThat(ticket.getId(), notNullValue());
-                Ticket t2 = instance.getTicket(ticket.getId());
-                assertThat(t2, notNullValue());
-                assertThat(t2.getId(), is(ticket.getId()));
-                t2.setAssigneeId(instance.getCurrentUser().getId());
-                t2.setStatus(Status.CLOSED);
-                instance.updateTicket(t2);
+            Ticket t2 = instance.getTicket(ticket.getId());
+            assertThat(t2, notNullValue());
+            assertThat(t2.getId(), is(ticket.getId()));
+            t2.setAssigneeId(instance.getCurrentUser().getId());
+            t2.setStatus(Status.CLOSED);
+            instance.updateTicket(t2);
             assertThat(ticket.getSubject(), is(t.getSubject()));
             assertThat(ticket.getRequester(), nullValue());
             assertThat(ticket.getRequesterId(), notNullValue());
             assertThat(ticket.getDescription(), is(t.getComment().getBody()));
             assertThat(instance.getTicket(ticket.getId()), notNullValue());
             firstId = Math.min(ticket.getId(), firstId);
-        } while (ticket.getId() < firstId + 200L); // seed enough data for the paging tests
+        }
+        while (ticket.getId() < firstId + 200L); // seed enough data for the paging tests
     }
 
     @Test
@@ -330,7 +333,7 @@ public class RealSmokeTest {
         createClientWithTokenOrPassword();
         String requesterEmail = config.getProperty("requester.email");
         assumeThat("Must have a requester email", requesterEmail, notNullValue());
-        for (User user : instance.getSearchResults(User.class, "requester:"+requesterEmail)) {
+        for (User user : instance.getSearchResults(User.class, "requester:" + requesterEmail)) {
             assertThat(user.getEmail(), is(requesterEmail));
         }
     }
@@ -513,7 +516,8 @@ public class RealSmokeTest {
         JobStatus result1 = instance.createOrganizations(orgs.subList(0, 2));
         JobStatus result2 = instance.createOrganizations(orgs.subList(2, 5));
 
-        while (result1.getStatus() != JobStatus.JobStatusEnum.completed || result2.getStatus() != JobStatus.JobStatusEnum.completed) {
+        while (result1.getStatus() != JobStatus.JobStatusEnum.completed ||
+                result2.getStatus() != JobStatus.JobStatusEnum.completed) {
             List<JobStatus<HashMap<String, Object>>> results = instance.getJobStatuses(Arrays.asList(result1, result2));
             result1 = results.get(0);
             result2 = results.get(1);
@@ -615,7 +619,7 @@ public class RealSmokeTest {
             if (++categoryCount > 10) {
                 break;
             }
-            for (Translation t: instance.getCategoryTranslations(cat.getId())) {
+            for (Translation t : instance.getCategoryTranslations(cat.getId())) {
                 assertNotNull(t.getId());
                 assertNotNull(t.getTitle());
                 assertNotNull(t.getBody());
@@ -629,7 +633,7 @@ public class RealSmokeTest {
     @Test
     public void getArticlesIncrementally() throws Exception {
         createClientWithTokenOrPassword();
-        final long ONE_WEEK = 7*24*60*60*1000;
+        final long ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
         int count = 0;
         try {
             for (Article t : instance.getArticlesIncrementally(new Date(new Date().getTime() - ONE_WEEK))) {

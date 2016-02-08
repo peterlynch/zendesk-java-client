@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
-public class ArticleAttachments {
+public class ArticleAttachment {
 
     /**
      * Automatically assigned when the article attachment is created
@@ -147,7 +147,7 @@ public class ArticleAttachments {
 
     @Override
     public String toString() {
-        return "ArticleAttachments{" +
+        return "ArticleAttachment{" +
                 "id=" + id +
                 ", url='" + url + '\'' +
                 ", articleId=" + articleId +

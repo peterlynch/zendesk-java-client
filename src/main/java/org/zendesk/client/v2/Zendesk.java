@@ -45,7 +45,7 @@ import org.zendesk.client.v2.model.User;
 import org.zendesk.client.v2.model.UserField;
 import org.zendesk.client.v2.model.hc.AccessPolicy;
 import org.zendesk.client.v2.model.hc.Article;
-import org.zendesk.client.v2.model.hc.ArticleAttachments;
+import org.zendesk.client.v2.model.hc.ArticleAttachment;
 import org.zendesk.client.v2.model.hc.Category;
 import org.zendesk.client.v2.model.hc.Section;
 import org.zendesk.client.v2.model.hc.Translation;
@@ -491,7 +491,7 @@ public class Zendesk implements Closeable {
                 .set("query", searchTerm).set("section", sectionId), handleList(Article.class, "results"));
     }
 
-    public List<ArticleAttachments> getAttachmentsFromArticle(Long articleID) {
+    public List<ArticleAttachment> getAttachmentsFromArticle(Long articleID) {
         return complete(submit(req("GET", tmpl("/help_center/articles/{id}/attachments.json").set("id", articleID)),
                 handleArticleAttachmentsList("article_attachments")));
     }
@@ -678,7 +678,7 @@ public class Zendesk implements Closeable {
                 handleStatus()));
     }
 
-    public ArticleAttachments createUploadArticle(long articleId, File file) throws IOException {
+    public ArticleAttachment createUploadArticle(long articleId, File file) throws IOException {
         BoundRequestBuilder builder =
                 client.preparePost(tmpl("/help_center/articles/{id}/attachments.json").set("id", articleId).toString());
         if (realm != null) {
@@ -690,7 +690,7 @@ public class Zendesk implements Closeable {
         builder.addBodyPart(
                 new FilePart("file", file, "application/octet-stream", Charset.forName("UTF-8"), file.getName()));
         final Request req = builder.build();
-        return complete(submit(req, handle(ArticleAttachments.class, "article_attachment")));
+        return complete(submit(req, handle(ArticleAttachment.class, "article_attachment")));
     }
 
     public void deleteUpload(Attachment.Upload upload) {
@@ -1593,7 +1593,7 @@ public class Zendesk implements Closeable {
      *
      * @param attachment
      */
-    public void deleteArticleAttachment(ArticleAttachments attachment) {
+    public void deleteArticleAttachment(ArticleAttachment attachment) {
         if (attachment.getId() == 0) {
             throw new IllegalArgumentException("Attachment requires id");
         }
@@ -1903,16 +1903,16 @@ public class Zendesk implements Closeable {
         };
     }
 
-    protected PagedAsyncCompletionHandler<List<ArticleAttachments>> handleArticleAttachmentsList(final String name) {
-        return new PagedAsyncCompletionHandler<List<ArticleAttachments>>() {
+    protected PagedAsyncCompletionHandler<List<ArticleAttachment>> handleArticleAttachmentsList(final String name) {
+        return new PagedAsyncCompletionHandler<List<ArticleAttachment>>() {
             @Override
-            public List<ArticleAttachments> onCompleted(Response response) throws Exception {
+            public List<ArticleAttachment> onCompleted(Response response) throws Exception {
                 logResponse(response);
                 if (isStatus2xx(response)) {
                     JsonNode responseNode = mapper.readTree(response.getResponseBodyAsBytes());
-                    List<ArticleAttachments> values = new ArrayList<ArticleAttachments>();
+                    List<ArticleAttachment> values = new ArrayList<ArticleAttachment>();
                     for (JsonNode node : responseNode.get(name)) {
-                        values.add(mapper.convertValue(node, ArticleAttachments.class));
+                        values.add(mapper.convertValue(node, ArticleAttachment.class));
                     }
                     return values;
                 }

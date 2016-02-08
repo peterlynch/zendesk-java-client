@@ -481,12 +481,12 @@ public class Zendesk implements Closeable {
                 handleList(Ticket.class, "results"));
     }
 
-    public Iterable<Article> getArticleFromSearch(String searchTerm) {
+    public Iterable<Article> getArticlesFromSearch(String searchTerm) {
         return new PagedIterable<Article>(tmpl("/help_center/articles/search.json{?query}").set("query", searchTerm),
                 handleList(Article.class, "results"));
     }
 
-    public Iterable<Article> getArticleFromSearch(String searchTerm, Long sectionId) {
+    public Iterable<Article> getArticlesFromSearch(String searchTerm, Long sectionId) {
         return new PagedIterable<Article>(tmpl("/help_center/articles/search.json{?section,query}")
                 .set("query", searchTerm).set("section", sectionId), handleList(Article.class, "results"));
     }

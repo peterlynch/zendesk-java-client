@@ -16,6 +16,8 @@ import com.ning.http.client.Request;
 import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
 import com.ning.http.client.multipart.FilePart;
+import com.ning.http.client.multipart.Part;
+import com.ning.http.client.multipart.StringPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zendesk.client.v2.model.Attachment;
@@ -82,6 +84,7 @@ import java.util.regex.Pattern;
  */
 public class Zendesk implements Closeable {
     private static final String JSON = "application/json; charset=UTF-8";
+    private static final String MULTIPART_FORM_DATA = "multipart/form-data; charset=UTF-8";
     private static final Map<String, Class<? extends SearchResultEntity>> searchResultTypes = searchResultTypes();
     private static final Map<String, Class<? extends Target>> targetTypes = targetTypes();
     private static final Pattern RESTRICTED_PATTERN = Pattern.compile("%2B", Pattern.LITERAL);
@@ -270,6 +273,12 @@ public class Zendesk implements Closeable {
     private static void checkHasId(Article article) {
         if (article.getId() == null) {
             throw new IllegalArgumentException("Article requires id");
+        }
+    }
+
+    private static void checkHasId(ArticleAttachment articleAttachment) {
+        if (articleAttachment.getId() == null) {
+            throw new IllegalArgumentException("ArticleAttachment requires id");
         }
     }
 
@@ -1589,15 +1598,59 @@ public class Zendesk implements Closeable {
     }
 
     /**
+     * List all the article attachments for an article.
+     */
+    public List<ArticleAttachment> listArticleAttachments(Article article) {
+        checkHasId(article);
+        return Arrays.asList(complete(submit(req("GET", tmpl("/help_center/articles/{articleId}/attachments.json").set
+                        ("articleId",
+                                article.getId())),
+                handle(ArticleAttachment[].class, "article_attachments"))));
+    }
+
+    /**
+     * List all the inline article attachments for an article.
+     */
+    public List<ArticleAttachment> listArticleInlineAttachments(Article article) {
+        checkHasId(article);
+        return Arrays.asList(
+                complete(submit(req("GET",
+                        tmpl("/help_center/articles/{articleId}/attachments/inline.json").set("articleId",
+                                article.getId())),
+                        handle(ArticleAttachment[].class, "article_attachments"))));
+    }
+
+    /**
+     * List all the block article attachments for an article.
+     */
+    public List<ArticleAttachment> listArticleBlockAttachments(Article article) {
+        checkHasId(article);
+        return Arrays.asList(
+                complete(submit(req("GET",
+                        tmpl("/help_center/articles/{articleId}/attachments/block.json").set("articleId",
+                                article.getId())),
+                        handle(ArticleAttachment[].class, "article_attachments"))));
+    }
+
+    public ArticleAttachment createArticleAttachment(Article article, boolean inline, File file, String fileName) {
+        checkHasId(article);
+        FilePart filePart = new FilePart("file", file);
+        filePart.setFileName(fileName != null ? fileName : file.getName());
+        Part inlinePart = new StringPart("inline", Boolean.toString(inline));
+        return complete(
+                submit(req("POST", tmpl("/help_center/articles/{id}/attachments.json").set("id", article.getId()),
+                        inlinePart, filePart),
+                        handle(ArticleAttachment.class, "article_attachment")));
+    }
+
+    /**
      * Delete attachment from article.
      *
-     * @param attachment
+     * @param articleAttachment
      */
-    public void deleteArticleAttachment(ArticleAttachment attachment) {
-        if (attachment.getId() == 0) {
-            throw new IllegalArgumentException("Attachment requires id");
-        }
-        deleteArticleAttachment(attachment.getId());
+    public void deleteArticleAttachment(ArticleAttachment articleAttachment) {
+        checkHasId(articleAttachment);
+        deleteArticleAttachment(articleAttachment.getId());
     }
 
     /**
@@ -1734,6 +1787,31 @@ public class Zendesk implements Closeable {
 
     private Request req(String method, String url) {
         RequestBuilder builder = new RequestBuilder(method);
+        applyCommonRequestSettings(builder, url);
+        return builder.build();
+    }
+
+    private Request req(String method, Uri template, String contentType, byte[] body) {
+        RequestBuilder builder = new RequestBuilder(method);
+        applyCommonRequestSettings(builder, url);
+        builder.addHeader("Content-type", contentType);
+        builder.setBody(body);
+        return builder.build();
+    }
+
+    private Request req(String method, Uri template, Part... parts) {
+        RequestBuilder builder = new RequestBuilder(method);
+        applyCommonRequestSettings(builder, template.toString());
+        builder.addHeader("Content-type", MULTIPART_FORM_DATA);
+        if (parts != null) {
+            for (Part part : parts) {
+                builder.addBodyPart(part);
+            }
+        }
+        return builder.build();
+    }
+
+    private void applyCommonRequestSettings(RequestBuilder builder, String url) {
         if (realm != null) {
             builder.setRealm(realm);
         } else {
@@ -1741,22 +1819,8 @@ public class Zendesk implements Closeable {
         }
         builder.setUrl(
                 RESTRICTED_PATTERN.matcher(url).replaceAll("+")); // replace out %2B with + due to API restriction
-        return builder.build();
     }
 
-    private Request req(String method, Uri template, String contentType, byte[] body) {
-        RequestBuilder builder = new RequestBuilder(method);
-        if (realm != null) {
-            builder.setRealm(realm);
-        } else {
-            builder.addHeader("Authorization", "Bearer " + oauthToken);
-        }
-        builder.setUrl(RESTRICTED_PATTERN.matcher(template.toString())
-                .replaceAll("+")); //replace out %2B with + due to API restriction
-        builder.addHeader("Content-type", contentType);
-        builder.setBody(body);
-        return builder.build();
-    }
 
     protected ZendeskAsyncCompletionHandler<Void> handleStatus() {
         return new ZendeskAsyncCompletionHandler<Void>() {

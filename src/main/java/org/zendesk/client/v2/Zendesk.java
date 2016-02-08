@@ -296,6 +296,18 @@ public class Zendesk implements Closeable {
         }
     }
 
+    private static void checkHasCategoryId(Section section) {
+        if (section.getCategoryId() == null) {
+            throw new IllegalArgumentException("Section requires category id");
+        }
+    }
+
+    private static void checkHasLocale(Section section) {
+        if (section.getLocale() == null) {
+            throw new IllegalArgumentException("Section requires locale");
+        }
+    }
+
     private static void checkHasToken(Attachment.Upload upload) {
         if (upload.getToken() == null) {
             throw new IllegalArgumentException("Upload requires token");
@@ -1653,8 +1665,12 @@ public class Zendesk implements Closeable {
     }
 
     public Section createSection(Section section) {
-        return complete(submit(req("POST", cnst("/help_center/sections.json"), JSON,
-                json(Collections.singletonMap("section", section))), handle(Section.class, "section")));
+        checkHasCategoryId(section);
+        checkHasLocale(section);
+        return complete(
+                submit(req("POST",
+                        tmpl("/help_center/categories/{id}/sections.json").set("id", section.getCategoryId()),
+                        JSON, json(Collections.singletonMap("section", section))), handle(Section.class, "section")));
     }
 
     public Section updateSection(Section section) {

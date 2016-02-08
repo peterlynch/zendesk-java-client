@@ -9,7 +9,7 @@ public class ArticleAttachment {
     /**
      * Automatically assigned when the article attachment is created
      */
-    private int id;
+    private Long id;
 
     /**
      * The API url of this article attachment
@@ -19,7 +19,7 @@ public class ArticleAttachment {
     /**
      * Id of the associated article, if present
      */
-    private int articleId;
+    private Long articleId;
 
     /**
      * The name of the file
@@ -39,7 +39,7 @@ public class ArticleAttachment {
     /**
      * The size of the attachment file in bytes
      */
-    private int size;
+    private Long size;
 
     /**
      * If true, the attached file is shown in the dedicated admin UI for inline attachments and
@@ -58,11 +58,11 @@ public class ArticleAttachment {
      */
     private Date updatedAt;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -75,11 +75,11 @@ public class ArticleAttachment {
     }
 
     @JsonProperty("article_id")
-    public int getArticleId() {
+    public Long getArticleId() {
         return articleId;
     }
 
-    public void setArticleId(int articleId) {
+    public void setArticleId(Long articleId) {
         this.articleId = articleId;
     }
 
@@ -110,11 +110,11 @@ public class ArticleAttachment {
         this.contentType = contentType;
     }
 
-    public int getSize() {
+    public Long getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(Long size) {
         this.size = size;
     }
 

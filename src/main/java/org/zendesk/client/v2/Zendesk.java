@@ -390,9 +390,9 @@ public class Zendesk implements Closeable {
                 "ticket_form")));
     }
 
-    public List<TicketForm> getTicketForms() {
-        return complete(submit(req("GET", cnst("/ticket_forms.json")), handleList(TicketForm.class,
-                "ticket_forms")));
+    public Iterable<TicketForm> getTicketForms() {
+        return new PagedIterable<TicketForm>(cnst("/ticket_forms.json"), handleList(TicketForm.class,
+                "ticket_forms"));
     }
 
     public Ticket getTicket(long id) {

@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Zendesk sometimes returns JSON with a String instead of String[] so we need a custom deserializer.
+ * An Action is describing what to do and is common to {@link Trigger}s, {@link Automation}s, and {@link Macro}s.
  *
  * @author adavidson
  * @author Johno Crawford (johno@sulake.com)

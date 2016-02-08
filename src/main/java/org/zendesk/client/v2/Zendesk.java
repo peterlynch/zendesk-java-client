@@ -616,8 +616,8 @@ public class Zendesk implements Closeable {
                         .set("auditId", auditId)), handleStatus()));
     }
 
-    public List<Field> getTicketFields() {
-        return complete(submit(req("GET", cnst("/ticket_fields.json")), handleList(Field.class, "ticket_fields")));
+    public Iterable<Field> getTicketFields() {
+        return new PagedIterable<Field>(cnst("/ticket_fields.json"), handleList(Field.class, "ticket_fields"));
     }
 
     public Field getTicketField(long id) {
